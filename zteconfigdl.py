@@ -13,6 +13,7 @@ def main(ip, user, password, outfile):
     session.post(url, data=data, headers={'Content-Type': 'application/x-www-form-urlencoded'})
     if 'SID' not in session.cookies:
         print('Failed to login')
+        return
     
     manager_dev_config_t = str(session.get(url + "getpage.gch?pid=1002&nextpage=manager_dev_config_t.gch").content)
 
