@@ -8,14 +8,14 @@ def main(ip, user, password, outfile):
     url = "http://" + ip + "/"
     session = requests.Session()
 
-    Frm_Logintoken = re.findall(r"getObj\(\"Frm_Logintoken\"\)\.value = \"(.*?)\"\;", str(session.get(url, timeout=1).content), re.MULTILINE)[0]
+    Frm_Logintoken = re.findall(r"getObj\(\"Frm_Logintoken\"\)\.value = \"(.*?)\"\;", session.get(url, timeout=1).text, re.MULTILINE)[0]
     data = f"frashnum=&action=login&Frm_Logintoken={Frm_Logintoken}&Username={user}&Password={password}"
     session.post(url, data=data, headers={'Content-Type': 'application/x-www-form-urlencoded'})
     if 'SID' not in session.cookies:
         print('Failed to login')
         return
-    
-    manager_dev_config_t = str(session.get(url + "getpage.gch?pid=1002&nextpage=manager_dev_config_t.gch").content)
+
+    manager_dev_config_t = session.get(url + "getpage.gch?pid=1002&nextpage=manager_dev_config_t.gch").text
 
     UPLOAD_SESSION_TOKEN = re.findall(r"name=\"UPLOAD_SESSION_TOKEN\" value=\"(.*?)\"", manager_dev_config_t, re.MULTILINE)[0]
     fDownload = html.unescape(re.findall(r"name=\"fDownload\" method=\"POST\" action=\"(.*?)\"", manager_dev_config_t, re.MULTILINE)[0])
